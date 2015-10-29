@@ -1,0 +1,12 @@
+Package: hwriter5
+Title: hwriter5: Writing HTML5 from R
+Version: 0.1.0
+Authors@R: person("David", "Scott", email = "d.scott@auckland.ac.nz", role = c("aut", "cre"))
+Description: This package writes HTML from R. The facilities provided by the
+    package are similar to those available in hwriterPlus, which in turn is
+    an extension of the hwriter package. The major difference between this
+    package and its predecessors is that the HTML produced is HTML5 compliant. 
+Depends: R (>= 3.1.1)
+Suggests: testthat
+License: GPL (>= 2)
+LazyData: true
