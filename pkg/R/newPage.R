@@ -1,7 +1,9 @@
 newPage <- function(filename, dirname = NULL, title = filename,
                     doctype = "<!DOCTYPE html>\n",
+                    html.attributes = "lang='en'",
                     link.javascript = NULL,
                     mathjaxconfig = NULL, mathjax = "default",
+                    meta.attributes = "charset='utf-8'",
                     link.css = NULL, css = NULL,
                     head = NULL, head.attributes = NULL,
                     body.attributes = NULL,
@@ -118,7 +120,8 @@ newPage <- function(filename, dirname = NULL, title = filename,
                               head.attributes))
   bodyStart <- do.call(hmakeTag, c(list("body", NULL), body.attributes))
   bodyStart <- substr(bodyStart, 1, regexpr("</body>", bodyStart) - 1)
-  hwrite(paste0(doctype, "<html ", ">", head, bodyStart), page)
+  hwrite(paste0(doctype, "<html ", html.attributes, ">",
+                head, bodyStart), page)
 
   list(p = page, hwriteLatex = hwriteLatex)
 }

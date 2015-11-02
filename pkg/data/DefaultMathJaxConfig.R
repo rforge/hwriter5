@@ -1,4 +1,4 @@
 defaultMathJaxConfig <-
   "MathJax.Hub.Config({
-     tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+     tex2jax: {inlineMath: [['$','$'],['\\(','\\)']]}
    });"

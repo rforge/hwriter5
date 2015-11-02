@@ -1,8 +1,9 @@
 defaultEquationStyle <-
-  "<style>
+  "<style scoped>
      .equationdisplay{
        border: 0px;
        border-collapse: collapse;
+       text-align: center
        margin-left: auto;
        margin-right: auto;
        width: 90%;

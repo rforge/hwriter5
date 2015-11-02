@@ -75,13 +75,19 @@ hwriteString <- function(txt, page = NULL, ...,
     if (!is.null(name)) {
       args <- c(args, list(name = name))
       boxtag <- 'a'
+    } else {
+      if (!is.null(heading)) {
+        boxtag <- paste0('h', heading)
+      } else {
+        if (div) {
+          boxtag <- 'div'
+        } else {
+          if (length(args)>0) {
+            boxtag <- 'span'
+          }
+        }
+      }
     }
-  } else {
-    if (!is.null(heading)) boxtag <- paste0('h', heading)
-  } else {
-    if (div) boxtag <- 'div'
-  } else {
-    if (length(args)>0) boxtag <- 'span'
   }
   ## box text
   if (!is.null(boxtag)) {
@@ -107,9 +113,9 @@ hwriteString <- function(txt, page = NULL, ...,
       cat(txt, file = p)
       closePage(p)
       invisible(txt)
+    } else {
+      invisible(cat(txt, file = page))
     }
-  } else {
-    invisible(cat(txt, file = page))
   }
 }
 
@@ -133,7 +139,7 @@ hwriteImage <- function(image.url, page = NULL, ...,
 
 
 ## public
-hmakeTag <- function(tag, data = NULL, ..., newline = FALSE) {
+hmakeTag <- function(tag, data = NULL, ..., newline = TRUE) {
   attrs <- list(...)
 
   ## dim is the output dim of the result
@@ -148,25 +154,25 @@ hmakeTag <- function(tag, data = NULL, ..., newline = FALSE) {
   if (na>0) {
     namax <- max(sapply(attrs, length))
     n <- max(c(length(tag), length(data), namax))
-    xattrs <- matrix('', nr = n, nc = na)
+    xattrs <- matrix("", nr = n, nc = na)
     nattrs <- names(attrs)
     for (i in 1:na) {
       z <- attrs[[i]]
       if (!is.null(z)) {
         fna <- !is.na(z)
-        xattrs[fna, i] <- paste0(' ', nattrs[i], '=\"', z[fna], '\"')
+        xattrs[fna, i] <- paste0("\n  ", nattrs[i], "=\'", z[fna], "\'")
         if (!is.null(dim(z))) dim <- dim(z)
       }
     }
-    xattrs <- apply(xattrs, 1, paste, collapse = '')
+    xattrs <- apply(xattrs, 1, paste, collapse = "")
   }
 
   if (newline) {
-    nl <- '\n'
+    nl <- "\n"
   } else {
     nl <- NULL
   }
-  res <- paste0('<', tag, xattrs, '>', nl, data, '</', tag, '>', nl)
+  res <- paste0("<", tag, xattrs, ">", nl, data, "</", tag, ">", nl)
   if (!is.null(dim)) {
     res <- array(res, dim = dim)
   }
