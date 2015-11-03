@@ -118,6 +118,8 @@ newPage <- function(filename, dirname = NULL, title = filename,
   if (!is.null(css)){
     css <- paste(hmakeTag("style", css, indent = indent, newline = TRUE),
                  collapse = "\n")
+    ## required by HTML5 validator
+    css <- sub("<style", "<style scoped", css, fixed = TRUE)
   }
   head <- paste(hmakeTag("title", title, indent = indent, newline = FALSE),
                 head, link.javascript,

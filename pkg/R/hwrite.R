@@ -19,7 +19,7 @@ hwrite.data.frame <- function(x, ...)
 ## public, flow
 ## switch between hwriteString and hwrite.matrix
 ## redimension 'dim' and 'byrow' matrix orientation
-hwrite.vector <- function(data, page = NULL, ...,
+hwrite.vector <- function(data, page = NULL, indent = '  ', ...,
                           table = NULL, names = NULL,
                           byrow = NULL, dim = NULL) {
   ## default arguments
@@ -45,26 +45,27 @@ hwrite.vector <- function(data, page = NULL, ...,
     }
     hwrite.matrix(data, page = page, ...)
   } else {
-    hwriteString(data, page = page, ...)
+    hwriteString(data, page = page, indent = indent, ...)
   }
 }
 
 ## private, flow
 ## ultimate string writing function
-hwriteString <- function(txt, page = NULL, ...,
+hwriteString <- function(txt, page = NULL, indent = '  ', ...,
                          link = NULL, name = NULL,
-                         heading = NULL, center = NULL,
+                         heading = NULL, par = NULL,
                          br = NULL, div = NULL) {
   ## default arguments
   if (is.null(br)) br <- FALSE
-  if (is.null(center)) center <- FALSE
   if (is.null(div)) div <- FALSE
+  if (is.null(par)) par <- FALSE
   args <- list(...)
 
   ## box text with:
   ## - 'a'    if link is non-null or name is non-null
   ## - 'h*'   if heading is non-null
   ## - 'div'  if div is TRUE
+  ## - 'p'    if par is TRUE
   ## - 'span' if args are present
   ## - no box otherwise
   boxtag <- NULL
@@ -82,7 +83,10 @@ hwriteString <- function(txt, page = NULL, ...,
         if (div) {
           boxtag <- 'div'
         } else {
-          if (length(args)>0) {
+          if (par) {
+            boxtag <- 'p'
+          } 
+          if (length(args) > 0) {
             boxtag <- 'span'
           }
         }
@@ -91,13 +95,9 @@ hwriteString <- function(txt, page = NULL, ...,
   }
   ## box text
   if (!is.null(boxtag)) {
-    txt <- do.call(hmakeTag, c(list(boxtag, txt), args))
+    txt <- do.call(hmakeTag, c(list(boxtag, txt, indent = indent), args))
   }
 
-  ## center
-  if (center) {
-    txt <- hmakeTag('center', txt)
-  }
 
   ## line break
   if (br) {
@@ -156,7 +156,7 @@ hmakeTag <- function(tag, data = NULL, ..., indent, newline = FALSE) {
 
   ## attributes grid
   xattrs <- NULL
-  if (na>0) {
+  if (na > 0) {
     namax <- max(sapply(attrs, length))
     n <- max(c(length(tag), length(data), namax))
     xattrs <- matrix("", nr = n, nc = na)

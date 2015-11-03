@@ -1,4 +1,4 @@
-closePage <- function(page, splash = FALSE) {
+closePage <- function(page, indent = "  ", splash = FALSE) {
   hwriterlink <- hwrite('hwriter5',
                         link = 'http://www.ebi.ac.uk/~gpau/hwriter/index.html')
   if (splash) {
@@ -9,7 +9,7 @@ closePage <- function(page, splash = FALSE) {
   } else {
     hwrite('\n<br/><br/>', page, br = TRUE)
   }
-  hwrite('</body></html>', page, br = FALSE)
+  hwrite(paste0(indent, '</body>\n', indent, '</html>'), page, br = FALSE)
   close(page)
 }
 
