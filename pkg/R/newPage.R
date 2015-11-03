@@ -6,7 +6,7 @@ newPage <- function(filename, dirname = NULL, title = filename,
                     meta.attributes = "charset='utf-8'",
                     link.css = NULL, css = NULL,
                     head = NULL, head.attributes = NULL,
-                    body.attributes = NULL,
+                    body.attributes = NULL, indent = "  ",
                     onlyContents = FALSE)
 {
   ## today <- format(strptime(date(), "%a %b %d %H:%M:%S %Y"), "%B %d, %Y")
@@ -95,6 +95,7 @@ newPage <- function(filename, dirname = NULL, title = filename,
                                     type = "text/x-mathjax-config",
                                     src = mathJaxConfig),
                            collapse = "\n")
+    mathjaxconfig <- paste0(indent, mathkjaxconfig)
   }
   if (!is.null(mathjax)){
     if (mathjax == "default") {
@@ -103,24 +104,35 @@ newPage <- function(filename, dirname = NULL, title = filename,
       mathJaxSource <- mathjax
     }
     mathjax <- paste(hmakeTag("script", type = "text/javascript",
-                              src = mathJaxSource),
+                              src = mathJaxSource, indent = indent,
+                              newline = TRUE),
                      collapse = "\n")
+    mathjax <- paste0(indent, mathjax)
   }
   if (!is.null(link.css)){
     link.css <- paste(hmakeTag("link", rel = "stylesheet",
-                               type = "text/css", href = link.css),
+                               type = "text/css", href = link.css,
+                               indent = indent, newline = TRUE),
                       collapse = "\n")
   }
   if (!is.null(css)){
-    css <- paste(hmakeTag("style", css), collapse = "\n")
+    css <- paste(hmakeTag("style", css, indent = indent, newline = TRUE),
+                 collapse = "\n")
   }
-  head <- paste(hmakeTag("title", title), head, link.javascript,
+  head <- paste(hmakeTag("title", title, indent = indent, newline = FALSE),
+                head, link.javascript,
                 mathjaxconfig, mathjax, link.css, css, sep = "\n")
-  head <- do.call(hmakeTag, c(list("head", head, newline = TRUE),
-                              head.attributes))
-  bodyStart <- do.call(hmakeTag, c(list("body", NULL), body.attributes))
+  head <- do.call(hmakeTag,
+                  c(list("head", head, indent = indent, newline = TRUE),
+                  head.attributes))
+  head <- gsub("(\n)+", "\n", head)
+  head <- sub("</head>", paste0(indent, "</head>\n", indent), head,
+              fixed = TRUE)
+  bodyStart <- do.call(hmakeTag, c(list("body", NULL, indent = indent,
+                                        newline = TRUE),
+                                   body.attributes))
   bodyStart <- substr(bodyStart, 1, regexpr("</body>", bodyStart) - 1)
-  hwrite(paste0(doctype, "<html ", html.attributes, ">",
+  hwrite(paste0(doctype, "<html ", html.attributes, ">\n  ",
                 head, bodyStart), page)
 
   list(p = page, hwriteLatex = hwriteLatex)

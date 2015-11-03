@@ -139,9 +139,14 @@ hwriteImage <- function(image.url, page = NULL, ...,
 
 
 ## public
-hmakeTag <- function(tag, data = NULL, ..., newline = TRUE) {
+hmakeTag <- function(tag, data = NULL, ..., indent, newline = FALSE) {
   attrs <- list(...)
 
+  if (newline) {
+    nl <- paste0("\n", indent)
+  } else {
+    nl <- NULL
+  }
   ## dim is the output dim of the result
   dim <- dim(tag)
   if (!is.null(dim(data))) dim <- dim(data)
@@ -160,19 +165,14 @@ hmakeTag <- function(tag, data = NULL, ..., newline = TRUE) {
       z <- attrs[[i]]
       if (!is.null(z)) {
         fna <- !is.na(z)
-        xattrs[fna, i] <- paste0("\n  ", nattrs[i], "=\'", z[fna], "\'")
+        xattrs[fna, i] <- paste0(nl, indent, nattrs[i], "=\'", z[fna], "\'")
         if (!is.null(dim(z))) dim <- dim(z)
       }
     }
     xattrs <- apply(xattrs, 1, paste, collapse = "")
   }
 
-  if (newline) {
-    nl <- "\n"
-  } else {
-    nl <- NULL
-  }
-  res <- paste0("<", tag, xattrs, ">", nl, data, "</", tag, ">", nl)
+  res <- paste0("<", tag, xattrs, ">", nl, data, "</", tag, ">")
   if (!is.null(dim)) {
     res <- array(res, dim = dim)
   }
